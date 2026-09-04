@@ -31,7 +31,7 @@ $sessionTag = "report_$sessionTimestamp"
 # -------------------------------------------------------------------------
 # LOAD MULTI-ENVIRONMENT CONFIGURATION FROM config/environments.json
 # -------------------------------------------------------------------------
-$configPath = Join-Path $projectRoot "config\environments.json"
+$configPath = Join-Path $projectRoot "config/environments.json"
 if (Test-Path $configPath) {
     try {
         $envsJson = Get-Content $configPath -Raw | ConvertFrom-Json
@@ -76,7 +76,7 @@ if ($Parallel -or $Workers -gt 1) {
 }
 
 # Ensure reports directories exist
-$reportDirs = @("reports\db", "reports\api", "reports\html", "reports\perf", "reports\screenshots", "reports\logs", "reports\excel")
+$reportDirs = @("reports/db", "reports/api", "reports/html", "reports/perf", "reports/screenshots", "reports/logs", "reports/excel")
 foreach ($dir in $reportDirs) {
     $fullPath = Join-Path $projectRoot $dir
     if (-not (Test-Path $fullPath)) {
@@ -145,22 +145,22 @@ $journeySuccess = ($LASTEXITCODE -eq 0)
 $journeyDuration = [math]::Round(((Get-Date) - $stepStart).TotalSeconds, 2)
 
 # Generate Java Surefire & TestNG Reports for API & DB with session timestamp
-$apiReportPath = Join-Path $projectRoot "reports\api\$sessionTag"
-$dbReportPath = Join-Path $projectRoot "reports\db\$sessionTag"
-
-$mavenParallelArgs = @()
-if ($Parallel) {
-    $mavenParallelArgs += "-Dparallel=methods"
-    $mavenParallelArgs += "-DthreadCount=$activeWorkers"
-}
+$apiReportPath = Join-Path $projectRoot "reports/api/$sessionTag"
+$dbReportPath = Join-Path $projectRoot "reports/db/$sessionTag"
 
 $apiStart = Get-Date
-& $mvnCmd test "-Denv=$Env" "-Dtest=ProductsApiTest" "-Dsurefire.reportsDirectory=$apiReportPath" @mavenParallelArgs 2>&1 | Out-Null
+$mvnApiArgs = @("test", "-Denv=$Env", "-Dtest=ProductsApiTest", "-Dsurefire.reportsDirectory=$apiReportPath")
+if ($Parallel) {
+    $mvnApiArgs += "-Dparallel=methods"
+    $mvnApiArgs += "-DthreadCount=$activeWorkers"
+}
+& $mvnCmd @mvnApiArgs 2>&1 | Out-Null
 $apiSuccess = ($LASTEXITCODE -eq 0)
 $apiDuration = [math]::Round(((Get-Date) - $apiStart).TotalSeconds, 2)
 
 $dbStart = Get-Date
-& $mvnCmd test "-Denv=$Env" "-Dtest=DatabaseIntegrityTest" "-Dsurefire.reportsDirectory=$dbReportPath" 2>&1 | Out-Null
+$mvnDbArgs = @("test", "-Denv=$Env", "-Dtest=DatabaseIntegrityTest", "-Dsurefire.reportsDirectory=$dbReportPath")
+& $mvnCmd @mvnDbArgs 2>&1 | Out-Null
 $dbSuccess = ($LASTEXITCODE -eq 0)
 $dbDuration = [math]::Round(((Get-Date) - $dbStart).TotalSeconds, 2)
 
@@ -171,8 +171,9 @@ $perfSuccess = $true
 $perfDuration = 0
 if (-not $SkipPerformance) {
     $stepStart = Get-Date
-    $perfScript = Join-Path $projectRoot "performance\scripts\run-performance.ps1"
-    & powershell -ExecutionPolicy Bypass -File $perfScript -Timestamp $sessionTimestamp
+    $perfScript = Join-Path $projectRoot "performance/scripts/run-performance.ps1"
+    $psCmd = if (Get-Command "pwsh" -ErrorAction SilentlyContinue) { "pwsh" } else { "powershell" }
+    & $psCmd -ExecutionPolicy Bypass -File $perfScript -Timestamp $sessionTimestamp
     $perfSuccess = ($LASTEXITCODE -eq 0)
     $perfDuration = [math]::Round(((Get-Date) - $stepStart).TotalSeconds, 2)
 }
@@ -180,7 +181,7 @@ if (-not $SkipPerformance) {
 # -------------------------------------------------------------------------
 # STAGE 3: AUTOMATED MULTI-SHEET EXCEL REPORT GENERATION (.xlsx)
 # -------------------------------------------------------------------------
-$excelScript = Join-Path $projectRoot "web\src\reporting\excelReporter.ts"
+$excelScript = Join-Path $projectRoot "web/src/reporting/excelReporter.ts"
 if (Test-Path $excelScript) {
     & npx ts-node $excelScript --session $sessionTag --env $Env 2>&1 | Out-Null
 }
@@ -224,12 +225,14 @@ Write-Host "  * Performance Raporu: reports/perf/$sessionTag/index.html" -Foregr
 Write-Host "  * Execution Logs:     reports/logs/$sessionTag/execution.log" -ForegroundColor Gray
 
 # Check for Failure Screenshots
-$screenshotDir = Join-Path $projectRoot "reports\screenshots\$sessionTag"
-$failureScreenshots = Get-ChildItem -Path $screenshotDir -Filter "*.png" -ErrorAction SilentlyContinue
-if ($failureScreenshots) {
-    Write-Host "`nHata Ekran Goruntuleri (Failure Screenshots):" -ForegroundColor Yellow
-    foreach ($ss in $failureScreenshots) {
-        Write-Host "  ! Ekran Goruntusu:    reports/screenshots/$sessionTag/$($ss.Name)" -ForegroundColor Yellow
+$screenshotDir = Join-Path $projectRoot "reports/screenshots/$sessionTag"
+if (Test-Path $screenshotDir) {
+    $failureScreenshots = Get-ChildItem -Path $screenshotDir -Filter "*.png" -ErrorAction SilentlyContinue
+    if ($failureScreenshots) {
+        Write-Host "`nHata Ekran Goruntuleri (Failure Screenshots):" -ForegroundColor Yellow
+        foreach ($ss in $failureScreenshots) {
+            Write-Host "  ! Ekran Goruntusu:    reports/screenshots/$sessionTag/$($ss.Name)" -ForegroundColor Yellow
+        }
     }
 }
 
