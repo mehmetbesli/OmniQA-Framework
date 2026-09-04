@@ -125,14 +125,11 @@ jobs:
 
       - name: 📑 Publish GitHub Step Summary
         if: always()
-        shell: pwsh
         run: |
-          $summaryFile = $env:GITHUB_STEP_SUMMARY
-          if ($summaryFile) {
-            @"
+          cat << 'EOF' >> $GITHUB_STEP_SUMMARY
           # 🚀 OmniQA Test Automation Pipeline Summary
           
-          > **Environment:** ``${{ github.event.inputs.environment || 'qa' }}`` | **Browser:** ``${{ github.event.inputs.browser || 'chromium' }}`` | **Workers:** ``${{ github.event.inputs.workers || '1' }}``
+          > **Environment:** \`${{ github.event.inputs.environment || 'qa' }}\` | **Browser:** \`${{ github.event.inputs.browser || 'chromium' }}\` | **Workers:** \`${{ github.event.inputs.workers || '1' }}\`
           
           ### 📊 4-Layer Execution Breakdown (8 Test Cases)
           | Test Layer | Technology Stack | Total Tests | Status |
@@ -150,8 +147,7 @@ jobs:
           - **🔌 REST Assured & DB Reports:** \`reports/api/**\`, \`reports/db/**\`
           - **⚡ JMeter Performance Dashboard:** \`reports/perf/**\`
           - **📝 Oturum Logları:** \`reports/logs/**\`
-          "@ | Out-File -FilePath $summaryFile -Encoding utf8 -Append
-          }
+          EOF
 
       - name: 📑 Upload OmniQA Excel Report (.xlsx)
         if: always()

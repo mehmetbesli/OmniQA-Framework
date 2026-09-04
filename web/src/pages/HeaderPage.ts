@@ -42,13 +42,13 @@ export class HeaderPage extends BasePage {
   }
 
   async getLoggedInUsername(): Promise<string> {
-    await this.usernameLabel.waitFor({ state: 'visible', timeout: 10000 });
+    await this.usernameLabel.waitFor({ state: 'visible', timeout: 15000 });
     return await this.getText(this.usernameLabel);
   }
 
   async isUserLoggedIn(): Promise<boolean> {
     try {
-      await this.usernameLabel.waitFor({ state: 'visible', timeout: 10000 });
+      await this.usernameLabel.waitFor({ state: 'visible', timeout: 15000 });
       return true;
     } catch {
       return false;

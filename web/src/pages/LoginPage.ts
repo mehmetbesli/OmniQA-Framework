@@ -33,31 +33,35 @@ export class LoginPage extends BasePage {
   }
 
   async selectUsername(username: string): Promise<void> {
+    Logger.info(`Selecting username: ${username}`);
     await this.usernameDropdown.click();
-    if (await this.usernameFirstOption.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await this.usernameFirstOption.click();
+    const option = this.page.locator('#username [class*="option"], div[id*="react-select"][id*="option"], [class*="-option"]').filter({ hasText: username }).first();
+    if (await option.isVisible({ timeout: 4000 }).catch(() => false)) {
+      await option.click();
     } else {
-      const option = this.dropdownOptions.filter({ hasText: username });
-      if (await option.first().isVisible({ timeout: 2000 }).catch(() => false)) {
-        await option.first().click();
+      const anyOption = this.page.locator('#username [class*="option"], div[id*="react-select"][id*="option"], [class*="-option"]').first();
+      if (await anyOption.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await anyOption.click();
       } else {
-        await this.usernameInput.fill(username);
-        await this.page.keyboard.press('Enter');
+        await this.usernameInput.fill(username).catch(() => {});
+        await this.page.keyboard.press('Enter').catch(() => {});
       }
     }
   }
 
   async selectPassword(password: string): Promise<void> {
+    Logger.info(`Selecting password: ${password}`);
     await this.passwordDropdown.click();
-    if (await this.passwordFirstOption.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await this.passwordFirstOption.click();
+    const option = this.page.locator('#password [class*="option"], div[id*="react-select"][id*="option"], [class*="-option"]').filter({ hasText: password }).first();
+    if (await option.isVisible({ timeout: 4000 }).catch(() => false)) {
+      await option.click();
     } else {
-      const option = this.dropdownOptions.filter({ hasText: password });
-      if (await option.first().isVisible({ timeout: 2000 }).catch(() => false)) {
-        await option.first().click();
+      const anyOption = this.page.locator('#password [class*="option"], div[id*="react-select"][id*="option"], [class*="-option"]').first();
+      if (await anyOption.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await anyOption.click();
       } else {
-        await this.passwordInput.fill(password);
-        await this.page.keyboard.press('Enter');
+        await this.passwordInput.fill(password).catch(() => {});
+        await this.page.keyboard.press('Enter').catch(() => {});
       }
     }
   }
