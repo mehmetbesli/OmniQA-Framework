@@ -111,8 +111,8 @@ Write-Host "       OMNIQA POLYGLOT FRAMEWORK - 15-STEP MASTER PIPELINE          
 Write-Host "==========================================================================" -ForegroundColor Cyan
 Write-Host "Timestamp:   $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Gray
 Write-Host "Session:     $sessionTag" -ForegroundColor Gray
-Write-Host "Environment: $(($Env).ToUpper())" -ForegroundColor Yellow
-Write-Host "Execution:   $modeDisplay | Browser(s): $browserDisplay" -ForegroundColor Yellow
+Write-Host "Environment: $(($Env).ToUpper())" -ForegroundColor Gray
+Write-Host "Execution:   $modeDisplay | Browser(s): $browserDisplay" -ForegroundColor Gray
 Write-Host "Target URL:  $targetUrl" -ForegroundColor Gray
 Write-Host "--------------------------------------------------------------------------"
 
@@ -194,7 +194,7 @@ $totalDuration = [math]::Round(((Get-Date) - $startTime).TotalSeconds, 2)
 Write-Host "`n==========================================================================" -ForegroundColor Cyan
 Write-Host "             OMNIQA 15-STEP CHRONOLOGICAL PIPELINE SUMMARY                " -ForegroundColor Cyan
 Write-Host "==========================================================================" -ForegroundColor Cyan
-Write-Host "Environment: $(($Env).ToUpper()) | Mode: $modeDisplay | Target: $targetUrl" -ForegroundColor Yellow
+Write-Host "Environment: $(($Env).ToUpper()) | Mode: $modeDisplay | Target: $targetUrl" -ForegroundColor Cyan
 
 $statusWeb = if ($journeySuccess) { "PASSED" } else { "FAILED" }
 $statusApi = if ($apiSuccess) { "PASSED" } else { "FAILED" }
@@ -217,7 +217,7 @@ Write-Host "--------------------------------------------------------------------
 Write-Host "Total Execution Time: $totalDuration seconds" -ForegroundColor Cyan
 
 Write-Host "`nTest Raporu Ciktilari (Session: $sessionTag | Env: $(($Env).ToUpper())):" -ForegroundColor Cyan
-Write-Host "  * Excel Raporu (.xlsx): reports/excel/$sessionTag/OmniQA_Execution_Report.xlsx" -ForegroundColor Green
+Write-Host "  * Excel Raporu (.xlsx): reports/excel/$sessionTag/OmniQA_Execution_Report.xlsx" -ForegroundColor Gray
 Write-Host "  * Web UI Raporu:      reports/html/$sessionTag/index.html" -ForegroundColor Gray
 Write-Host "  * API Raporu:         reports/api/$sessionTag/index.html" -ForegroundColor Gray
 Write-Host "  * DB Raporu:          reports/db/$sessionTag/index.html" -ForegroundColor Gray
