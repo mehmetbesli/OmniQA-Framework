@@ -5,8 +5,8 @@ on:
     branches: [ main, master, release/* ]
   pull_request:
     branches: [ main, master ]
-  schedule:
-    - cron: '0 2 * * 1-5' # Weekdays at 02:00 AM UTC
+  # schedule:
+  #   - cron: '0 2 * * 1-5' # Disabled: Uncomment when daily runs are desired
   workflow_dispatch:
     inputs:
       environment:
@@ -32,7 +32,7 @@ on:
       workers:
         description: 'Parallel Worker Count'
         required: true
-        default: '2'
+        default: '1'
         type: choice
         options:
           - '1'
@@ -101,7 +101,7 @@ jobs:
           if (-not $browserName) { $browserName = "chromium" }
 
           $workersCount = "${{ github.event.inputs.workers }}"
-          if (-not $workersCount) { $workersCount = 2 } else { $workersCount = [int]$workersCount }
+          if (-not $workersCount) { $workersCount = 1 } else { $workersCount = [int]$workersCount }
 
           $skipPerf = "${{ github.event.inputs.skip_performance }}"
           $perfFlag = if ($skipPerf -eq "true") { $true } else { $false }
@@ -135,7 +135,7 @@ jobs:
             @"
           # 🚀 OmniQA Test Automation Pipeline Summary
           
-          > **Environment:** ``${{ github.event.inputs.environment || 'qa' }}`` | **Browser:** ``${{ github.event.inputs.browser || 'chromium' }}`` | **Workers:** ``${{ github.event.inputs.workers || '2' }}``
+          > **Environment:** ``${{ github.event.inputs.environment || 'qa' }}`` | **Browser:** ``${{ github.event.inputs.browser || 'chromium' }}`` | **Workers:** ``${{ github.event.inputs.workers || '1' }}``
           
           ### 📊 4-Layer Execution Breakdown (8 Test Cases)
           | Test Layer | Technology Stack | Total Tests | Status |

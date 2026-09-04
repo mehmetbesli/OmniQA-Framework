@@ -7,7 +7,7 @@
       "apiBaseUrl": "https://www.bstackdemo.com",
       "apiPath": "/api",
       "retries": 1,
-      "parallelWorkers": 3,
+      "parallelWorkers": 1,
       "auth": {
         "username": "demouser",
         "password": "testingisfun99"
@@ -36,7 +36,7 @@
       "apiBaseUrl": "https://www.bstackdemo.com",
       "apiPath": "/api",
       "retries": 1,
-      "parallelWorkers": 2,
+      "parallelWorkers": 1,
       "auth": {
         "username": "demouser",
         "password": "testingisfun99"
@@ -65,7 +65,7 @@
       "apiBaseUrl": "https://www.bstackdemo.com",
       "apiPath": "/api",
       "retries": 2,
-      "parallelWorkers": 4,
+      "parallelWorkers": 1,
       "auth": {
         "username": "demouser",
         "password": "testingisfun99"
@@ -94,7 +94,7 @@
       "apiBaseUrl": "https://www.bstackdemo.com",
       "apiPath": "/api",
       "retries": 1,
-      "parallelWorkers": 4,
+      "parallelWorkers": 1,
       "auth": {
         "username": "demouser",
         "password": "testingisfun99"
