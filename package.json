@@ -91,6 +91,7 @@
     "@types/node": "^22.13.4",
     "dotenv": "^16.4.7",
     "exceljs": "^4.4.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }
 }

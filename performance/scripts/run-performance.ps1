@@ -49,7 +49,7 @@ if (-not $cmd) {
     $cmd = Get-Command "jmeter.bat" -ErrorAction SilentlyContinue
 }
 if ($cmd) {
-    $jmeterExe = $cmd.Source
+    $jmeterExe = if ($cmd.Source) { $cmd.Source } elseif ($cmd.Path) { $cmd.Path } else { "jmeter" }
 } else {
     $candidatePaths = @(
         "C:\Program Files\apache-jmeter-5.6.3\bin\jmeter.bat",

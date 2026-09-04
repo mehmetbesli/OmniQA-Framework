@@ -74,18 +74,15 @@ jobs:
 
       - name: ⚡ Setup Apache JMeter
         run: |
-          if ! command -v jmeter &> /dev/null; then
-            sudo apt-get update -qq
-            sudo apt-get install -y -qq jmeter || true
-          fi
-          if ! command -v jmeter &> /dev/null; then
-            wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz
-            tar -xzf apache-jmeter-5.6.3.tgz
-            echo "$GITHUB_WORKSPACE/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
-          fi
+          JMETER_VER="5.6.3"
+          echo "Setting up Apache JMeter ${JMETER_VER}..."
+          wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VER}.tgz
+          tar -xzf apache-jmeter-${JMETER_VER}.tgz
+          chmod +x apache-jmeter-${JMETER_VER}/bin/jmeter
+          echo "$GITHUB_WORKSPACE/apache-jmeter-${JMETER_VER}/bin" >> $GITHUB_PATH
 
       - name: 📦 Install Node Dependencies
-        run: npm ci || npm install
+        run: npm ci
 
       - name: 🌐 Install Playwright Browsers & OS Dependencies
         run: npx playwright install --with-deps chromium firefox webkit
@@ -113,15 +110,15 @@ jobs:
 
           if ($browserName -eq "all") {
               if ($perfFlag) {
-                  pwsh -File ./run-e2e.ps1 -Env $envName -CrossBrowser -Parallel -Workers $workersCount -SkipPerformance
+                  pwsh -File ./run-e2e.ps1 -Env $envName -CrossBrowser -Workers $workersCount -SkipPerformance
               } else {
-                  pwsh -File ./run-e2e.ps1 -Env $envName -CrossBrowser -Parallel -Workers $workersCount
+                  pwsh -File ./run-e2e.ps1 -Env $envName -CrossBrowser -Workers $workersCount
               }
           } else {
               if ($perfFlag) {
-                  pwsh -File ./run-e2e.ps1 -Env $envName -Browser $browserName -Parallel -Workers $workersCount -SkipPerformance
+                  pwsh -File ./run-e2e.ps1 -Env $envName -Browser $browserName -Workers $workersCount -SkipPerformance
               } else {
-                  pwsh -File ./run-e2e.ps1 -Env $envName -Browser $browserName -Parallel -Workers $workersCount
+                  pwsh -File ./run-e2e.ps1 -Env $envName -Browser $browserName -Workers $workersCount
               }
           }
         continue-on-error: false
