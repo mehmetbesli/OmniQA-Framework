@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "paths": {
+      "@web/*": ["./web/src/*"],
+      "@pages/*": ["./web/src/pages/*"],
+      "@config/*": ["./web/src/config/*"],
+      "@constants/*": ["./web/src/constants/*"],
+      "@data/*": ["./web/src/data/*"],
+      "@utils/*": ["./web/src/utils/*"]
+    }
+  },
+  "include": ["web/src/**/*", "web/tests/**/*", "playwright.config.ts"],
+  "exclude": ["node_modules", "dist", "target", "reports"]
+}

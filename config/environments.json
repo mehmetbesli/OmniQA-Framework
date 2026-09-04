@@ -1,0 +1,121 @@
+{
+  "defaultEnv": "qa",
+  "environments": {
+    "qa": {
+      "name": "qa",
+      "baseUrl": "https://www.bstackdemo.com",
+      "apiBaseUrl": "https://www.bstackdemo.com",
+      "apiPath": "/api",
+      "retries": 1,
+      "parallelWorkers": 3,
+      "auth": {
+        "username": "demouser",
+        "password": "testingisfun99"
+      },
+      "database": {
+        "url": "jdbc:h2:mem:omniqa_db_qa;DB_CLOSE_DELAY=-1",
+        "user": "sa",
+        "password": ""
+      },
+      "performance": {
+        "host": "www.bstackdemo.com",
+        "threads": 3,
+        "rampUp": 1,
+        "loops": 1
+      },
+      "timeouts": {
+        "element": 10000,
+        "pageLoad": 30000,
+        "api": 15000
+      },
+      "headless": true
+    },
+    "dev": {
+      "name": "dev",
+      "baseUrl": "https://www.bstackdemo.com",
+      "apiBaseUrl": "https://www.bstackdemo.com",
+      "apiPath": "/api",
+      "retries": 1,
+      "parallelWorkers": 2,
+      "auth": {
+        "username": "demouser",
+        "password": "testingisfun99"
+      },
+      "database": {
+        "url": "jdbc:h2:mem:omniqa_db_dev;DB_CLOSE_DELAY=-1",
+        "user": "sa",
+        "password": ""
+      },
+      "performance": {
+        "host": "www.bstackdemo.com",
+        "threads": 2,
+        "rampUp": 1,
+        "loops": 1
+      },
+      "timeouts": {
+        "element": 15000,
+        "pageLoad": 35000,
+        "api": 20000
+      },
+      "headless": true
+    },
+    "staging": {
+      "name": "staging",
+      "baseUrl": "https://www.bstackdemo.com",
+      "apiBaseUrl": "https://www.bstackdemo.com",
+      "apiPath": "/api",
+      "retries": 2,
+      "parallelWorkers": 4,
+      "auth": {
+        "username": "demouser",
+        "password": "testingisfun99"
+      },
+      "database": {
+        "url": "jdbc:h2:mem:omniqa_db_staging;DB_CLOSE_DELAY=-1",
+        "user": "sa",
+        "password": ""
+      },
+      "performance": {
+        "host": "www.bstackdemo.com",
+        "threads": 5,
+        "rampUp": 2,
+        "loops": 2
+      },
+      "timeouts": {
+        "element": 10000,
+        "pageLoad": 30000,
+        "api": 15000
+      },
+      "headless": true
+    },
+    "prod": {
+      "name": "prod",
+      "baseUrl": "https://www.bstackdemo.com",
+      "apiBaseUrl": "https://www.bstackdemo.com",
+      "apiPath": "/api",
+      "retries": 1,
+      "parallelWorkers": 4,
+      "auth": {
+        "username": "demouser",
+        "password": "testingisfun99"
+      },
+      "database": {
+        "url": "jdbc:h2:mem:omniqa_db_prod;DB_CLOSE_DELAY=-1",
+        "user": "sa",
+        "password": ""
+      },
+      "performance": {
+        "host": "www.bstackdemo.com",
+        "threads": 5,
+        "rampUp": 2,
+        "loops": 1
+      },
+      "timeouts": {
+        "element": 8000,
+        "pageLoad": 25000,
+        "api": 10000
+      },
+      "headless": true
+    }
+  }
+}

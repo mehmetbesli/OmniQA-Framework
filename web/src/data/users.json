@@ -1,0 +1,31 @@
+{
+  "validUser": {
+    "username": "demouser",
+    "password": "testingisfun99",
+    "displayName": "demouser"
+  },
+  "existingOrdersUser": {
+    "username": "existing_orders_user",
+    "password": "testingisfun99",
+    "displayName": "existing_orders_user"
+  },
+  "favUser": {
+    "username": "fav_user",
+    "password": "testingisfun99",
+    "displayName": "fav_user"
+  },
+  "imageNotLoadingUser": {
+    "username": "image_not_loading_user",
+    "password": "testingisfun99",
+    "displayName": "image_not_loading_user"
+  },
+  "lockedUser": {
+    "username": "locked_user",
+    "password": "testingisfun99",
+    "displayName": "locked_user"
+  },
+  "invalidUser": {
+    "username": "invalid_user",
+    "password": "wrong_password"
+  }
+}

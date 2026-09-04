@@ -1,0 +1,16 @@
+{
+  "validCustomer": {
+    "firstName": "Mehmet",
+    "lastName": "Besli",
+    "address": "Ataturk Caddesi No 123",
+    "state": "Istanbul",
+    "postalCode": "34000"
+  },
+  "usCustomer": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "address": "742 Evergreen Terrace",
+    "state": "California",
+    "postalCode": "90210"
+  }
+}

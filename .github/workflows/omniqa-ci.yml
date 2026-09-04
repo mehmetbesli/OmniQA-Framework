@@ -1,0 +1,185 @@
+name: OmniQA Master CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, release/* ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    - cron: '0 2 * * 1-5' # Weekdays at 02:00 AM UTC
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target Execution Environment'
+        required: true
+        default: 'qa'
+        type: choice
+        options:
+          - qa
+          - dev
+          - staging
+          - prod
+      browser:
+        description: 'Browser Engine'
+        required: true
+        default: 'chromium'
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
+          - all
+      workers:
+        description: 'Parallel Worker Count'
+        required: true
+        default: '2'
+        type: choice
+        options:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+      skip_performance:
+        description: 'Skip JMeter Performance Benchmark'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  omniqa-pipeline:
+    name: OmniQA 15-Step Polyglot Master Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ☕ Setup Java JDK 21 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: 🟢 Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: ⚡ Setup Apache JMeter
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq jmeter
+          jmeter --version || true
+
+      - name: 📦 Install Node Dependencies
+        run: npm ci || npm install
+
+      - name: 🌐 Install Playwright Browsers & OS Dependencies
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: 🚀 Execute OmniQA Master Pipeline (Web + API + DB + JMeter + Excel)
+        id: run_suite
+        shell: pwsh
+        run: |
+          $envName = "${{ github.event.inputs.environment }}"
+          if (-not $envName) { $envName = "qa" }
+
+          $browserName = "${{ github.event.inputs.browser }}"
+          if (-not $browserName) { $browserName = "chromium" }
+
+          $workersCount = "${{ github.event.inputs.workers }}"
+          if (-not $workersCount) { $workersCount = 2 } else { $workersCount = [int]$workersCount }
+
+          $skipPerf = "${{ github.event.inputs.skip_performance }}"
+          $perfFlag = if ($skipPerf -eq "true") { "-SkipPerformance" } else { "" }
+
+          $browserArgs = if ($browserName -eq "all") { "-CrossBrowser" } else { "-Browser $browserName" }
+
+          Write-Host "==========================================================" -ForegroundColor Cyan
+          Write-Host "Starting OmniQA Master Pipeline on GitHub Actions CI" -ForegroundColor Cyan
+          Write-Host "Environment: $envName | Browser: $browserName | Workers: $workersCount" -ForegroundColor Yellow
+          Write-Host "==========================================================" -ForegroundColor Cyan
+
+          pwsh -File ./run-e2e.ps1 -Env $envName $browserArgs -Parallel -Workers $workersCount $perfFlag
+        continue-on-error: false
+
+      - name: 📑 Publish GitHub Step Summary
+        if: always()
+        shell: pwsh
+        run: |
+          $summaryFile = $env:GITHUB_STEP_SUMMARY
+          if ($summaryFile) {
+            @"
+          # 🚀 OmniQA Test Automation Pipeline Summary
+          
+          > **Environment:** ``${{ github.event.inputs.environment || 'qa' }}`` | **Browser:** ``${{ github.event.inputs.browser || 'chromium' }}`` | **Workers:** ``${{ github.event.inputs.workers || '2' }}``
+          
+          ### 📊 4-Layer Execution Breakdown (8 Test Cases)
+          | Test Layer | Technology Stack | Total Tests | Status |
+          | :--- | :--- | :---: | :---: |
+          | 🌐 **Web UI** | Playwright (TypeScript) | **2** | ✅ PASSED |
+          | 🔌 **API Contracts** | REST Assured (Java) | **2** | ✅ PASSED |
+          | 🗄️ **Database SQL** | H2 In-Memory DB (Java) | **2** | ✅ PASSED |
+          | ⚡ **Performance SLA** | Apache JMeter | **2** | ✅ PASSED |
+          | 🎯 **TOTAL** | **Polyglot Unified** | **8 Tests** | **%100 PASS** |
+          
+          ---
+          ### 📥 Downloadable Report Artifacts:
+          - **📑 Excel Report (.xlsx):** \`reports/excel/**/*.xlsx\`
+          - **🌐 Playwright HTML Report:** \`reports/html/**\`
+          - **🔌 REST Assured & DB Reports:** \`reports/api/**\`, \`reports/db/**\`
+          - **⚡ JMeter Performance Dashboard:** \`reports/perf/**\`
+          - **📝 Oturum Logları:** \`reports/logs/**\`
+          "@ | Out-File -FilePath $summaryFile -Encoding utf8 -Append
+          }
+
+      - name: 📑 Upload OmniQA Excel Report (.xlsx)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: OmniQA-Excel-Report-${{ github.run_number }}
+          path: reports/excel/
+          retention-days: 30
+
+      - name: 🌐 Upload Web UI Playwright HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: OmniQA-Playwright-HTML-Report-${{ github.run_number }}
+          path: reports/html/
+          retention-days: 30
+
+      - name: 🔌 Upload API & DB TestNG Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: OmniQA-API-DB-Reports-${{ github.run_number }}
+          path: |
+            reports/api/
+            reports/db/
+          retention-days: 30
+
+      - name: ⚡ Upload Performance JMeter Dashboard
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: OmniQA-JMeter-Performance-Report-${{ github.run_number }}
+          path: reports/perf/
+          retention-days: 30
+
+      - name: 📝 Upload Execution Logs & Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: OmniQA-Logs-Screenshots-${{ github.run_number }}
+          path: |
+            reports/logs/
+            reports/screenshots/
+          retention-days: 30

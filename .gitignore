@@ -1,0 +1,35 @@
+# Node / Playwright
+node_modules/
+playwright-report/
+blob-report/
+playwright/.cache/
+test-results/
+.env
+
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+
+# IDE & OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs & Temporary outputs
+*.log
+jmeter.log
+reports/
+temp/
+
+# DB
+*.mv.db
+*.trace.db
