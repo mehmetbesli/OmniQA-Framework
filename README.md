@@ -55,14 +55,34 @@ Framework, her katmanda **2 adet yüksek değerli test case** koşturacak şekil
 
 ---
 
-## 📑 Otomatik Çok Sayfalı Excel Raporlama (.xlsx)
+## 📑 Otomatik Çok Sayfalı Excel Raporlama (.xlsx) & Rapor Arşivi
 
-Her test koşumunda (`run-e2e.ps1`), test sonuçları otomatik olarak **`reports/excel/report_YYYYMMDD_HHMMSS/OmniQA_Execution_Report.xlsx`** yolunda 4 ayrı sayfada arşivlenir:
+Her test koşumunda (`run-e2e.ps1`), test sonuçları dinamik oturum etiketiyle (`report_YYYYMMDD_HHMMSS`) toplanır ve otomatik olarak **4 ayrı sayfadan oluşan profesyonel bir Excel raporuna** dönüştürülür:
 
-1. **📊 Executive Summary:** Yönetici KPI paneli, Pass Rate %, Ortam, Süre ve katman bazlı özet.
-2. **🌐 Web UI Details:** Playwright testleri, tarayıcı motorları, süreler ve hata detayları.
-3. **🔌 API & DB Details:** REST Assured endpoint ve H2 DB SQL doğrulama logları.
-4. **⚡ Performance & SLA:** JMeter ortalama yanıt süreleri, 95th percentile ve SLA kriterleri.
+> 📥 **Canlı Örnek Raporu İndirin:** Framework tarafından otomatik oluşturulan 4 sayfalı örnek Excel raporunu doğrudan incelemek için:  
+> **👉 [OmniQA_Execution_Report_Sample.xlsx](docs/sample-reports/OmniQA_Execution_Report_Sample.xlsx)**
+
+---
+
+### 📊 Excel Raporu Sayfa Dağılımı (Workbook Sheets)
+
+| Sayfa (Sheet) | Kapsam & İçerik | Detaylar |
+| :--- | :--- | :--- |
+| **1. 📊 Executive Summary** | Üst Düzey Yönetici KPI Özeti | Toplam Test, Pass/Fail Oranı (%), Katman Bazlı Başarı, Çalışma Süresi & Ortam Bilgisi |
+| **2. 🌐 Web UI Details** | Playwright Test Dökümü | Test Senaryosu, Tarayıcı Motoru, Retry Sayısı, Süre (sn) ve Hata Mesajları |
+| **3. 🔌 API & DB Details** | REST Assured & H2 DB Kayıtları | Endpoint/Tablo, Test Metodu, HTTP/SQL Durumu, Yanıt Süresi (ms) ve Doğrulama Logu |
+| **4. ⚡ Performance & SLA** | JMeter Yük & SLA İstatistikleri | Sampler Adı, İstek Sayısı, Ortalama / Min / Max / %95 Yanıt Süreleri ve SLA Durumu |
+
+---
+
+### ☁️ CI/CD İndirilebilir Rapor Artefaktları (GitHub Actions Artifacts)
+
+GitHub Actions üzerinde koşan her pipeline'ın ardından aşağıdaki raporlar **Artifacts** sekmesinde 30 gün boyunca indirilebilir olarak arşivlenir:
+- 📑 **OmniQA-Excel-Report:** Çok sayfalı `.xlsx` yönetici raporu
+- 🌐 **OmniQA-Playwright-HTML-Report:** İnteraktif trace, video ve ekran görüntülü HTML raporu
+- 🔌 **OmniQA-API-DB-Reports:** TestNG ve Maven Surefire XML/HTML test çıktıları
+- ⚡ **OmniQA-JMeter-Performance-Report:** JMeter interaktif HTML performans dashboard'u
+- 📝 **OmniQA-Logs-Screenshots:** Kronolojik `execution.log` ve hata ekran görüntüleri
 
 ---
 
@@ -73,6 +93,9 @@ OmniQA-Framework/
 │
 ├── config/
 │   └── environments.json                  # 🌍 Tek Merkezi Ortam & Paralel Worker Konfigürasyonu
+│
+├── docs/
+│   └── sample-reports/                    # 📑 Örnek Canlı Excel Rapor Arşivi (.xlsx)
 │
 ├── package.json                           # Kök script yöneticisi (npm test, npm run test:...)
 ├── pom.xml                                # Java (REST Assured & H2 DB) derleyici
