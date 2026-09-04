@@ -201,10 +201,10 @@ $statusApi = if ($apiSuccess) { "PASSED" } else { "FAILED" }
 $statusDb = if ($dbSuccess) { "PASSED" } else { "FAILED" }
 $statusPerf = if ($perfSuccess) { "PASSED" } else { "FAILED" }
 
-$colorWeb = if ($journeySuccess) { "Green" } else { "Red" }
-$colorApi = if ($apiSuccess) { "Green" } else { "Red" }
-$colorDb = if ($dbSuccess) { "Green" } else { "Red" }
-$colorPerf = if ($perfSuccess) { "Green" } else { "Red" }
+$colorWeb = if ($journeySuccess) { "Gray" } else { "Red" }
+$colorApi = if ($apiSuccess) { "Gray" } else { "Red" }
+$colorDb = if ($dbSuccess) { "Gray" } else { "Red" }
+$colorPerf = if ($perfSuccess) { "Gray" } else { "Red" }
 
 Write-Host ("{0,-39} | {1,-24} | {2,7}" -f "TEST KATMANI & ADIMLAR", "ARAC & PROGRAMLAMA DILI", "DURUM") -ForegroundColor DarkCyan
 Write-Host "--------------------------------------------------------------------------"
