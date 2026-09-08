@@ -38,7 +38,8 @@ RUN apt-get update && \
 # 2. Install Apache JMeter (5.6.3)
 ARG JMETER_VERSION=5.6.3
 RUN echo "Installing Apache JMeter ${JMETER_VERSION}..." && \
-    wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz -O /tmp/jmeter.tgz && \
+    (curl -fSL "https://dlcdn.apache.org/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz" -o /tmp/jmeter.tgz || \
+     curl -fSL "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz" -o /tmp/jmeter.tgz) && \
     tar -xzf /tmp/jmeter.tgz -C /opt && \
     mv /opt/apache-jmeter-${JMETER_VERSION} /opt/apache-jmeter && \
     chmod +x /opt/apache-jmeter/bin/jmeter && \
@@ -63,8 +64,8 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY pom.xml ./
-# Pre-download maven dependencies for offline execution
-RUN mvn dependency:go-offline -B || true
+# Resolve project dependencies quickly without downloading unneeded plugin trees
+RUN mvn dependency:resolve -B || true
 
 # 5. Copy full project files
 COPY . .

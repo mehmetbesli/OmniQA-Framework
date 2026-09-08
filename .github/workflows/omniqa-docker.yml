@@ -55,10 +55,14 @@ jobs:
       - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: 🔨 Build OmniQA Docker Image
-        run: |
-          echo "Building OmniQA Docker Container Image..."
-          docker build -t omniqa-framework:ci .
+      - name: 🔨 Build & Cache OmniQA Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: omniqa-framework:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: 📁 Prepare Host Reports Directory
         run: |
