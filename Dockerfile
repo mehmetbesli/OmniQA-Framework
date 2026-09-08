@@ -3,7 +3,7 @@
 # Base: Official Microsoft Playwright image (includes Node.js + all browsers + OS deps)
 # Adds: Eclipse Temurin JDK 21, Apache Maven, Apache JMeter, PowerShell Core
 # ==============================================================================
-FROM mcr.microsoft.com/playwright:v1.50.1-jammy
+FROM mcr.microsoft.com/playwright:v1.62.1-jammy
 
 LABEL maintainer="Mehmet Besli"
 LABEL description="OmniQA Unified Polyglot Test Framework Container (Playwright TS, REST Assured, H2 DB, JMeter)"
