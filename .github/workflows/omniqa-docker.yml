@@ -90,6 +90,13 @@ jobs:
               omniqa-framework:ci -Env "$ENV_NAME" -Browser "$BROWSER_NAME" -Workers "$WORKERS_COUNT"
           fi
 
+      - name: 🔓 Fix Reports Permissions for Host Runner
+        if: always()
+        run: |
+          echo "Setting host user ownership on mounted reports directory..."
+          sudo chown -R $USER:$USER "$GITHUB_WORKSPACE/reports"
+          sudo chmod -R 777 "$GITHUB_WORKSPACE/reports"
+
       - name: 📑 Publish GitHub Step Summary
         if: always()
         run: |
