@@ -1,4 +1,4 @@
-name: OmniQA Master CI/CD Pipeline
+name: 🚀 OmniQA CI/CD - Native Host Runner
 
 on:
   push:
@@ -51,7 +51,7 @@ concurrency:
 
 jobs:
   omniqa-pipeline:
-    name: OmniQA 15-Step Polyglot Master Suite
+    name: 🖥️ OmniQA Native Host Suite (Web + API + DB + JMeter)
     runs-on: ubuntu-latest
     timeout-minutes: 30
 

@@ -1,4 +1,4 @@
-name: OmniQA Docker CI Pipeline
+name: 🐳 OmniQA CI/CD - Docker Containerized Runner
 
 on:
   push:
@@ -44,7 +44,7 @@ concurrency:
 
 jobs:
   omniqa-docker-pipeline:
-    name: OmniQA Containerized Test Suite
+    name: 📦 OmniQA Docker Container Suite (Isolated)
     runs-on: ubuntu-latest
     timeout-minutes: 35
 
