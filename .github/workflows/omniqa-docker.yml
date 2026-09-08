@@ -32,7 +32,7 @@ on:
       workers:
         description: 'Parallel Worker Count'
         required: true
-        default: '2'
+        default: '1'
         type: choice
         options:
           - '1'
