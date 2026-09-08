@@ -203,3 +203,57 @@ Framework, [`.github/workflows/omniqa-ci.yml`](.github/workflows/omniqa-ci.yml) 
   - ⚡ JMeter HTML Dashboard & SLA Metrikleri
   - 📸 Hata Ekran Görüntüleri & 📝 Detaylı Oturum Logları
 - **GitHub Step Summary:** Test sonuçları GitHub Actions özet ekranında doğrudan renkli tablo olarak listelenir.
+
+---
+
+## 🐳 Konteynerleşme: Docker & Docker Compose Entegrasyonu
+
+OmniQA Framework, **"benim makinemde çalışıyor, sunucuda patladı"** problemini sıfırlamak için tam yalıtımlı **Docker Container** altyapısına sahiptir. 
+
+Resmi Microsoft Playwright imajı üzerine inşa edilen konteyner; **Node.js, Playwright tarayıcıları, Eclipse Temurin JDK 21, Apache Maven, Apache JMeter ve PowerShell Core** paketlerini eksiksiz barındırır.
+
+### 🛠️ 1. Dockerfile ile İmaj Oluşturma (Build)
+
+```bash
+# Docker imajını oluştur
+npm run docker:build
+# veya doğrudan CLI:
+docker build -t omniqa-framework:latest .
+```
+
+### 🚀 2. Konteyner İçinde Testleri Koşturma (Run)
+
+Test koşumundan sonra üretilen raporların (HTML, Excel, Loglar) host makinenize aktarılması için `reports` klasörü volume olarak bağlanır:
+
+```bash
+# Varsayılan QA ortamında 15 adımlı master paketi koştur:
+npm run docker:run
+
+# Tüm tarayıcılarda (Cross-Browser) ve paralel koştur:
+npm run docker:run:cross-browser
+
+# Özel parametrelerle koşturma:
+docker run --rm -v "${PWD}/reports:/app/reports" omniqa-framework:latest -Env dev -Browser firefox -Workers 2
+```
+
+### 📦 3. Docker Compose ile Tek Komutla Yönetim
+
+[`docker-compose.yml`](docker-compose.yml) sayesinde hiçbir karmaşık komuta gerek kalmadan tüm testi ayağa kaldırabilirsiniz:
+
+```bash
+# Konteyneri derle ve QA testlerini başlat:
+npm run docker:compose
+# veya:
+docker compose up --build
+
+# Cross-browser profilini koştur:
+docker compose --profile full-matrix up --build
+
+# Konteynerleri temizle:
+npm run docker:compose:down
+```
+
+### 🔄 4. GitHub Actions + Docker Entegrasyonu
+
+Framework bünyesinde hem yerel Ubuntu runner üzerinde koşan [`omniqa-ci.yml`](.github/workflows/omniqa-ci.yml) hem de doğrudan Docker konteyneri içinde koşan [`.github/workflows/omniqa-docker.yml`](.github/workflows/omniqa-docker.yml) pipeline'ı yer almaktadır. Bu sayede testleriniz CI ortamında da %100 izole ve tekrarlanabilir şekilde icra edilir.
+

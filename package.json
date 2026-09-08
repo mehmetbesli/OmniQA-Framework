@@ -71,7 +71,12 @@
     "test:performance": "powershell -ExecutionPolicy Bypass -File performance/scripts/run-performance.ps1",
     "report": "powershell -Command \"$latest = Get-ChildItem -Path reports\\html -Directory -Filter 'report_*' -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if ($latest) { npx playwright show-report $latest.FullName } else { npx playwright show-report reports/html }\"",
     "report:excel": "powershell -Command \"$latest = Get-ChildItem -Path reports\\excel -Filter '*.xlsx' -Recurse -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if ($latest) { Start-Process $latest.FullName; Write-Host ('Opened: ' + $latest.FullName) -ForegroundColor Green } else { Write-Warning 'No Excel report found. Run npm run report:excel:generate first.' }\"",
-    "report:excel:generate": "npx ts-node web/src/reporting/excelReporter.ts"
+    "report:excel:generate": "npx ts-node web/src/reporting/excelReporter.ts",
+    "docker:build": "docker build -t omniqa-framework:latest .",
+    "docker:run": "docker run --rm -v \"${PWD}/reports:/app/reports\" omniqa-framework:latest",
+    "docker:run:cross-browser": "docker run --rm -v \"${PWD}/reports:/app/reports\" omniqa-framework:latest -Env qa -CrossBrowser -Workers 3",
+    "docker:compose": "docker compose up --build",
+    "docker:compose:down": "docker compose down"
   },
   "keywords": [
     "omniqa",

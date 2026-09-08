@@ -1,0 +1,11 @@
+node_modules/
+target/
+reports/
+test-results/
+temp/
+.git/
+.github/
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db

@@ -1,0 +1,45 @@
+services:
+  omniqa-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: omniqa-framework:latest
+    container_name: omniqa-framework-runner
+    environment:
+      - TEST_ENV=qa
+      - CI=true
+    volumes:
+      # Mount reports directory to preserve HTML, Excel, API, DB and Perf reports on host
+      - ./reports:/app/reports
+    # Default command executes 15-step master suite in QA environment
+    command: ["-Env", "qa"]
+
+  omniqa-cross-browser:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: omniqa-framework:latest
+    container_name: omniqa-framework-cross-browser
+    environment:
+      - TEST_ENV=qa
+      - CI=true
+    volumes:
+      - ./reports:/app/reports
+    command: ["-Env", "qa", "-CrossBrowser", "-Workers", "3"]
+    profiles:
+      - full-matrix
+
+  omniqa-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: omniqa-framework:latest
+    container_name: omniqa-framework-dev
+    environment:
+      - TEST_ENV=dev
+      - CI=true
+    volumes:
+      - ./reports:/app/reports
+    command: ["-Env", "dev"]
+    profiles:
+      - dev

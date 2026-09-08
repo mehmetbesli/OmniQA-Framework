@@ -1,0 +1,147 @@
+name: OmniQA Docker CI Pipeline
+
+on:
+  push:
+    branches: [ main, master, release/* ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target Execution Environment'
+        required: true
+        default: 'qa'
+        type: choice
+        options:
+          - qa
+          - dev
+          - staging
+          - prod
+      browser:
+        description: 'Browser Engine'
+        required: true
+        default: 'chromium'
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
+          - all
+      workers:
+        description: 'Parallel Worker Count'
+        required: true
+        default: '2'
+        type: choice
+        options:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+
+concurrency:
+  group: docker-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  omniqa-docker-pipeline:
+    name: OmniQA Containerized Test Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔨 Build OmniQA Docker Image
+        run: |
+          echo "Building OmniQA Docker Container Image..."
+          docker build -t omniqa-framework:ci .
+
+      - name: 📁 Prepare Host Reports Directory
+        run: |
+          mkdir -p reports/html reports/excel reports/api reports/db reports/perf reports/logs reports/screenshots
+          chmod -R 777 reports
+
+      - name: 🚀 Run OmniQA Suite Inside Docker Container
+        run: |
+          ENV_NAME="${{ github.event.inputs.environment || 'qa' }}"
+          BROWSER_NAME="${{ github.event.inputs.browser || 'chromium' }}"
+          WORKERS_COUNT="${{ github.event.inputs.workers || '2' }}"
+
+          echo "=========================================================="
+          echo "Executing OmniQA Inside Docker Container"
+          echo "Environment: $ENV_NAME | Browser: $BROWSER_NAME | Workers: $WORKERS_COUNT"
+          echo "=========================================================="
+
+          if [ "$BROWSER_NAME" = "all" ]; then
+            docker run --rm \
+              -v "$GITHUB_WORKSPACE/reports:/app/reports" \
+              omniqa-framework:ci -Env "$ENV_NAME" -CrossBrowser -Workers "$WORKERS_COUNT"
+          else
+            docker run --rm \
+              -v "$GITHUB_WORKSPACE/reports:/app/reports" \
+              omniqa-framework:ci -Env "$ENV_NAME" -Browser "$BROWSER_NAME" -Workers "$WORKERS_COUNT"
+          fi
+
+      - name: 📑 Publish GitHub Step Summary
+        if: always()
+        run: |
+          cat << 'EOF' >> $GITHUB_STEP_SUMMARY
+          # 🐳 OmniQA Docker Execution Summary
+          
+          > **Execution Mode:** \`Docker Containerized\`
+          > **Environment:** \`${{ github.event.inputs.environment || 'qa' }}\` | **Browser:** \`${{ github.event.inputs.browser || 'chromium' }}\`
+          
+          ### 📊 Polyglot Layer Status
+          - 🌐 **Web UI:** Playwright (TypeScript) inside Container
+          - 🔌 **API Contracts:** REST Assured (Java 21) inside Container
+          - 🗄️ **Database SQL:** H2 In-Memory DB inside Container
+          - ⚡ **Performance:** Apache JMeter inside Container
+          EOF
+
+      - name: 📑 Upload OmniQA Excel Report (.xlsx)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Docker-OmniQA-Excel-Report-${{ github.run_number }}
+          path: reports/excel/
+          retention-days: 30
+
+      - name: 🌐 Upload Web UI Playwright HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Docker-OmniQA-Playwright-HTML-Report-${{ github.run_number }}
+          path: reports/html/
+          retention-days: 30
+
+      - name: 🔌 Upload API & DB TestNG Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Docker-OmniQA-API-DB-Reports-${{ github.run_number }}
+          path: |
+            reports/api/
+            reports/db/
+          retention-days: 30
+
+      - name: ⚡ Upload Performance JMeter Dashboard
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Docker-OmniQA-JMeter-Performance-Report-${{ github.run_number }}
+          path: reports/perf/
+          retention-days: 30
+
+      - name: 📝 Upload Execution Logs & Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Docker-OmniQA-Logs-Screenshots-${{ github.run_number }}
+          path: |
+            reports/logs/
+            reports/screenshots/
+          retention-days: 30
