@@ -97,6 +97,9 @@ OmniQA-Framework/
 ├── docs/
 │   └── sample-reports/                    # 📑 Örnek Canlı Excel Rapor Arşivi (.xlsx)
 │
+├── Dockerfile                             # Konteyner imaj tanımı (Playwright, Java 21, JMeter, PowerShell)
+├── docker-compose.yml                     # Çoklu servis orkestrasyonu
+├── entrypoint.sh                          # Docker konteyner çalıştırma giriş betiği
 ├── package.json                           # Kök script yöneticisi (npm test, npm run test:...)
 ├── pom.xml                                # Java (REST Assured & H2 DB) derleyici
 ├── tsconfig.json                          # Modern TypeScript konfigürasyonu
@@ -110,7 +113,9 @@ OmniQA-Framework/
 │   │   ├── constants/                     # Rotalar, UI mesajları ve sıralama sabitleri
 │   │   ├── data/                          # users.json & checkoutData.json
 │   │   ├── pages/                         # Page Object Model sınıfları
+│   │   ├── reporting/excelReporter.ts     # 📑 Çok Sayfalı Profesyonel Excel Rapor Oluşturucu (.xlsx)
 │   │   └── utils/                         # Logger, Assertions, RetryHelper ve DB Helper
+│   └── tests/
 │       └── e2e/
 │           ├── unifiedShoppingE2E.spec.ts # 🚀 TC-E2E-01: 15 Adımlı Uçtan Uca Master Hibrit Test
 │           └── authFlow.spec.ts           # 🔐 TC-WEB-02: Kimlik Doğrulama, Oturum & Çıkış Testi
@@ -194,7 +199,7 @@ Framework, [`.github/workflows/omniqa-ci.yml`](.github/workflows/omniqa-ci.yml) 
 
 - **Tetikleyiciler (Triggers):**
   - Her `push` ve `pull_request` (main/master).
-  - Hafta içi her gece otomatik zamanlanmış koşum (`cron: 0 2 * * 1-5`).
+  - İsteğe bağlı zamanlanmış gece koşumu (`cron: 0 2 * * 1-5` — isteğe bağlı açılabilir, varsayılan olarak pasiftir).
   - **Manuel Tetikleme (`workflow_dispatch`):** GitHub arayüzünden tek tıkla **Ortam (QA, DEV, STAGING, PROD)**, **Tarayıcı (Chromium, Firefox, Safari, All)** ve **Paralel Worker Sayısı (1, 2, 3, 4)** seçilerek çalıştırılabilir.
 - **Otomatik Arşivleme & Artifacts:**
   - 📑 Excel Raporu (`OmniQA_Execution_Report.xlsx`)
